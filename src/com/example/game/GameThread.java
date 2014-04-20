@@ -13,6 +13,7 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.EditText;
 
 public abstract class GameThread extends Thread {
 	//Different mMode states
@@ -53,6 +54,9 @@ public abstract class GameThread extends Thread {
 	
 	private long now;
 	private float elapsed;
+	
+	//username holder
+	public String username;
 	
 
 	public GameThread(GameView gameView) {		
@@ -299,7 +303,7 @@ public abstract class GameThread extends Thread {
 			Message msg = mHandler.obtainMessage();
 			Bundle b = new Bundle();
 			b.putBoolean("score", true);
-			b.putString("text", getScoreString().toString());
+			b.putString("text", username + ": " + getScoreString().toString());
 			msg.setData(b);
 			mHandler.sendMessage(msg);
 		}

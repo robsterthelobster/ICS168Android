@@ -2,14 +2,19 @@ package com.example.game;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -19,6 +24,12 @@ public class MainActivity extends Activity {
 
     private GameThread mGameThread;
     private GameView mGameView;	
+    
+    private EditText  username=null;
+    private EditText  password=null;
+    private TextView attempts;
+    private Button login;
+    int counter = 3;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -28,22 +39,56 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        setContentView(R.layout.activity_main);
-        
-        mGameView = (GameView)findViewById(R.id.gamearea);
-        mGameView.setStatusView((TextView)findViewById(R.id.text));
-        mGameView.setScoreView((TextView)findViewById(R.id.score));
-              	
-        this.startGame(mGameView, null, savedInstanceState);
+        setContentView(R.layout.login);
+        username = (EditText)findViewById(R.id.editText1);
+        password = (EditText)findViewById(R.id.editText2);
+        attempts = (TextView)findViewById(R.id.textView5);
+        attempts.setText(Integer.toString(counter));
+        login = (Button)findViewById(R.id.button1);
+        		
+   
     }
+    
+    public void login(View view)
+    {
+    	// as long as username and password are not empty strings
+        if(!username.getText().toString().equals("") && 
+        		!password.getText().toString().equals(""))
+        {
+        	//System.out.println(username.getText());
+            setContentView(R.layout.activity_main);
+            
+            mGameView = (GameView)findViewById(R.id.gamearea);
+            mGameView.setStatusView((TextView)findViewById(R.id.text));
+            mGameView.setScoreView((TextView)findViewById(R.id.score));
+                  	
+            this.startGame(mGameView, null);
+        }	
+        else
+        {
+        	Toast.makeText(getApplicationContext(), "Wrong Credentials",
+	        Toast.LENGTH_SHORT).show();
+	        attempts.setBackgroundColor(Color.RED);	
+	        counter--;
+	        attempts.setText(Integer.toString(counter));
+	        if(counter==0){
+	        	login.setEnabled(false);
+	        }
+        }
 
-    private void startGame(GameView gView, GameThread gThread, Bundle savedInstanceState) {    	
+     }
+
+    private void startGame(GameView gView, GameThread gThread) {    	
 
     	//Set up a new game, we don't care about previous states
-    	mGameThread = new TheGame(mGameView);
+    	mGameThread = new Swarch(mGameView);
     	mGameView.setThread(mGameThread);
     	mGameThread.setState(GameThread.STATE_READY);
+    	// hardcode username to the game thread
+    	mGameThread.username = username.getText().toString();
     	mGameView.startSensor((SensorManager)getSystemService(Context.SENSOR_SERVICE));
     }
 

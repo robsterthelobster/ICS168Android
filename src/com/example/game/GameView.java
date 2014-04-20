@@ -158,7 +158,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					//Start a new thread
 					//Should be this to update screen with old game: new GameThread(this, thread);
 					//The method should set all fields in new thread to the value of old thread's fields 
-					thread = new TheGame(this); 
+					thread = new Swarch(this); 
 					thread.setRunning(true);
 					thread.start();
 				}
@@ -202,6 +202,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	 * Accelerometer
 	 */
 
+	@SuppressWarnings("deprecation")
 	public void startSensor(SensorManager sm) {
 		sm.registerListener(this.sensorAccelerometer, 
 				sm.getDefaultSensor(Sensor.TYPE_ORIENTATION),	
