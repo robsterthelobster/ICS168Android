@@ -13,7 +13,6 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.EditText;
 
 public abstract class GameThread extends Thread {
 	//Different mMode states
@@ -162,7 +161,7 @@ public abstract class GameThread extends Thread {
 	
 	//Finger touches the screen
 	public boolean onTouch(MotionEvent e) {
-		if(e.getAction() != MotionEvent.ACTION_DOWN) return false;
+//		if(e.getAction() != MotionEvent.ACTION_DOWN) return false;
 		
 		if(mMode == STATE_READY || mMode == STATE_LOSE || mMode == STATE_WIN) {
 			doStart();
@@ -175,17 +174,17 @@ public abstract class GameThread extends Thread {
 		}
 		
 		synchronized (mSurfaceHolder) {
-				this.actionOnTouch(e.getRawX(), e.getRawY());
+			this.actionOnTouch(e);
 		}
 		 
 		return false;
 	}
 	
-	protected void actionOnTouch(float x, float y) {
+	protected void actionOnTouch(MotionEvent e) {
 		//Override to do something
 	}
 
-	//The Accellerometer has changed
+	//The Accelerometer has changed
 	@SuppressWarnings("deprecation")
 	public void onSensorChanged(SensorEvent event) {
 		synchronized (mSurfaceHolder) {

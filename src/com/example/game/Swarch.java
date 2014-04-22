@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 
 public class Swarch extends GameThread{
 	
@@ -24,6 +25,10 @@ public class Swarch extends GameThread{
 	private Paint paint;
 	
 	private boolean motionEnabled = false;
+	
+	private float xPress, yPress, xRelease, yRelease;
+	
+	private static final int SWIPE_MIN_DISTANCE = 120;
 
 	//This is run before anything else, so we can prepare things here
 	public Swarch(GameView gameView) {
@@ -82,34 +87,65 @@ public class Swarch extends GameThread{
 
 	//This is run whenever the phone is touched by the user
 	@Override
-	protected void actionOnTouch(float x, float y) {
+	protected void actionOnTouch(MotionEvent e) {
 
 		//System.out.println("X " + x);
 		//System.out.println("Y " + y);
 		
-		int offset = 400;
+		switch(e.getAction())
+    	{
+    		case MotionEvent.ACTION_DOWN:
+    		{
+    			xPress = e.getX();
+    			yPress = e.getY();    			
+    			
+    			break;
+    		}
+    		
+    		case MotionEvent.ACTION_UP:
+    		{
+    			xRelease = e.getX();
+    			yRelease = e.getY();
+    			
+    			float xDelta = xPress - xRelease;
+    			float yDelta = yPress - yRelease;
+    			
+    			if (Math.abs(xDelta) > SWIPE_MIN_DISTANCE)
+    			{
+    				// Left to Right
+    				if (xPress < xRelease)
+    				{
+    					dx = 1;
+    					dy = 0;
+    				}
 
-		if(x < offset && y > offset && y < mCanvasHeight - offset)
-		{
-			dx = -1;
-			dy = 0;
-		}
-		if(x > mCanvasWidth - offset && y > offset && y < mCanvasHeight - offset)
-		{
-			dx = 1;
-			dy = 0;
-		}
-		if(y < offset && x > offset && x < mCanvasWidth - offset)
-		{
-			dy = -1;
-			dx = 0;
-		}
-		if(y > mCanvasHeight - offset && x > offset && x < mCanvasWidth - offset)
-		{
-			dy = 1;
-			dx = 0;
-		}
-		
+    				// Right to Left
+    				if (xPress > xRelease)
+    				{
+    					dx = -1;
+    					dy = 0;
+    				}
+    			}
+    			
+    			if (Math.abs(yDelta) > SWIPE_MIN_DISTANCE)
+    			{
+	    			// Top to Bottom
+	    			if (yPress < yRelease)
+	    			{
+	    				dx = 0;
+	    				dy = 1;
+	    			}
+	    			
+	    			// Bottom to Top
+	    			if (yPress > yRelease)
+	    			{
+	    				dx = 0;
+	    				dy = -1;	    		
+	    			}	    	
+    			}
+    			break;
+    		}
+    	}
 	}
 	
 	//This is run whenever the phone moves around its axises 
