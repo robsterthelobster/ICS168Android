@@ -21,6 +21,7 @@ public class MainActivity extends Activity {
     private static final int MENU_RESUME = 1;
     private static final int MENU_START = 2;
     private static final int MENU_STOP = 3;
+    private static final int MENU_MOTION = 4;
 
     private GameThread mGameThread;
     private GameView mGameView;	
@@ -127,6 +128,7 @@ public class MainActivity extends Activity {
         menu.add(0, MENU_START, 0, R.string.menu_start);
         menu.add(0, MENU_STOP, 0, R.string.menu_stop);
         menu.add(0, MENU_RESUME, 0, R.string.menu_resume);
+        menu.add(0, MENU_MOTION, 0, R.string.motion_enabled);
 
         return true;
     }
@@ -143,6 +145,9 @@ public class MainActivity extends Activity {
             case MENU_RESUME:
                 mGameThread.unpause();
                 return true;
+            case MENU_MOTION:
+            	mGameThread.setMotionControl();
+            	return true;
         }
 
         return false;

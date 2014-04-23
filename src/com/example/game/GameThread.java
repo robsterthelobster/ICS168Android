@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
@@ -54,10 +55,11 @@ public abstract class GameThread extends Thread {
 	private long now;
 	private float elapsed;
 	
-	//username holder
-	public String username;
+	// ADD ONS FOR PROJECT SWARCH
+	public String username;		// used to store username
+	protected boolean motionEnabled = false; 	// bool to store motion option
+	protected Paint paint;		// paint chooses the color in which to draw on canvas
 	
-
 	public GameThread(GameView gameView) {		
 		mGameView = gameView;
 		
@@ -83,13 +85,13 @@ public abstract class GameThread extends Thread {
 	}
 	
 	//Pre-begin a game
-	abstract public void setupBeginning();
+	abstract public void setupBeginning(boolean firstTimeSetUp);
 	
 	//Starting up the game
 	public void doStart() {
 		synchronized(mSurfaceHolder) {
 			
-			setupBeginning();
+			setupBeginning(true);
 			
 			mLastTime = System.currentTimeMillis() + 100;
 
@@ -178,6 +180,11 @@ public abstract class GameThread extends Thread {
 		}
 		 
 		return false;
+	}
+	
+	// flip the motion bool
+	public void setMotionControl() {
+		motionEnabled = !motionEnabled;
 	}
 	
 	protected void actionOnTouch(MotionEvent e) {

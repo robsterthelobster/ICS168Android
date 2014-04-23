@@ -7,6 +7,7 @@ import java.util.Random;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
@@ -14,17 +15,13 @@ public class Swarch extends GameThread{
 	
 	// every game entity is a square
 	private Rect myBox;
-	private int playerSize = 50;
+	private int playerSize;
 	private int playerX, playerY;
-	private int dx, dy;
+	private Point direction;
 	private float speed;
 	
 	private ArrayList<Rect> pellets;
-	private int pelletSize = 20;
-	
-	private Paint paint;
-	
-	private boolean motionEnabled = false;
+	private int pelletSize;
 	
 	private float xPress, yPress, xRelease, yRelease;
 	
@@ -40,28 +37,35 @@ public class Swarch extends GameThread{
 		paint = new Paint();
 		pellets = new ArrayList<Rect>();
 		myBox = new Rect();
+		direction = new Point(0, 0);
 	}
 
 	//This is run before a new game (also after an old game)
 	@Override
-	public void setupBeginning() {
+	public void setupBeginning(boolean firstTimeSetUp) {
 		
 		// player coordinates set here
 		playerX = mCanvasWidth/2;
 		playerY = mCanvasHeight/2;
 		myBox.set(playerX - playerSize, playerY - playerSize, playerX + playerSize, playerY + playerSize);
 		
-		speed = 8;
+		// sizes
+		//System.out.println("Height: " + mCanvasHeight);
+		playerSize = mCanvasHeight / 20;
+		pelletSize = mCanvasHeight / 50;
+		
+		// speed (up and down) are scaled to map size
+		speed = mCanvasWidth/4;
 
+		//score is set to 0
+		//score is automatically set to 0 anyways, but this is called for game resets
+		setScore(0);
+		
 		// original 4 random 4 pellets
-		// pellet is 5 by 5 square
-		for(int i = 0; i < 4; i++)
-		{
-			int randX = randInt(0, mCanvasWidth);
-			int randY = randInt(0, mCanvasHeight);
-			
-			pellets.add(new Rect(randX - pelletSize, randY - pelletSize, randX + pelletSize, randY + pelletSize));
-		}
+		// only have 4 random pellets if its the first time setting up
+		if(firstTimeSetUp)
+			for(int i = 0; i < 4; i++)
+				pellets.add(addPellet(new Rect()));
 	}
 
 	@Override
@@ -71,17 +75,18 @@ public class Swarch extends GameThread{
 		if(canvas == null) return;
 		
 		//House keeping
+		//this only draws the background, we can change it when deemed necessary
 		super.doDraw(canvas);
 
 		// draw player as blue
 		paint.setColor(Color.BLUE);
-		canvas.drawRect(myBox, new Paint());
+		canvas.drawRect(myBox, paint);
 		
 		// draw pellets as white
 		paint.setColor(Color.WHITE);
 		for(Rect rect: pellets)
 		{
-			canvas.drawRect(rect, new Paint());
+			canvas.drawRect(rect, paint);
 		}
 	}
 
@@ -115,15 +120,13 @@ public class Swarch extends GameThread{
     				// Left to Right
     				if (xPress < xRelease)
     				{
-    					dx = 1;
-    					dy = 0;
+    					direction.set(1, 0);
     				}
 
     				// Right to Left
     				if (xPress > xRelease)
     				{
-    					dx = -1;
-    					dy = 0;
+    					direction.set(-1, 0);
     				}
     			}
     			
@@ -132,15 +135,13 @@ public class Swarch extends GameThread{
 	    			// Top to Bottom
 	    			if (yPress < yRelease)
 	    			{
-	    				dx = 0;
-	    				dy = 1;
+	    				direction.set(0, 1);
 	    			}
 	    			
 	    			// Bottom to Top
 	    			if (yPress > yRelease)
 	    			{
-	    				dx = 0;
-	    				dy = -1;	    		
+	    				direction.set(0, -1);   		
 	    			}	    	
     			}
     			break;
@@ -152,7 +153,7 @@ public class Swarch extends GameThread{
 	@Override
 	protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
 		
-		if(motionEnabled)
+		if(this.motionEnabled)
 		{
 			// if the x tilt is greater than the y tilt
 			// prioritize the x tilt for player controls
@@ -160,18 +161,16 @@ public class Swarch extends GameThread{
 			if(Math.abs(xDirection) > Math.abs(yDirection))
 			{
 				if(xDirection < 0)
-					dy = -1;
+					direction.set(0, -1);
 				else if(xDirection > 0)
-					dy = 1;
-				dx = 0;
+					direction.set(0, 1);
 			}
 			else
 			{
 				if(yDirection < 0)
-					dx = 1;
+					direction.set(1, 0);
 				else if(yDirection > 0)
-					dx = -1;
-				dy = 0;
+					direction.set(-1, 0);
 			}
 		}
 	}
@@ -180,31 +179,26 @@ public class Swarch extends GameThread{
 	//This is run just before the game "scenario" is printed on the screen
 	@Override
 	protected void updateGame(float secondsElapsed) {
-		playerX += dx * speed;
-		playerY += dy * speed;
+		playerX += direction.x * speed * secondsElapsed;
+		playerY += direction.y * speed * secondsElapsed;
 				
 		// border check
 		if(myBox.left < 0 || myBox.right > mCanvasWidth ||
 				myBox.top < 0 || myBox.bottom > mCanvasHeight)
 		{
-			playerX = mCanvasWidth/2;
-			playerY = mCanvasHeight/2;
-			setScore(0);
-			speed = 8;
-			playerSize = 50;
+			this.setupBeginning(false);
 		}
 		
 		myBox.set(playerX - playerSize, playerY - playerSize, playerX + playerSize, playerY + playerSize);
 		
+		// player/pellet collision
 		for(Rect rect : pellets)
 		{
 			if(myBox.intersect(rect))
 			{
-				System.out.println("INTERSECTION");
-				int randX = randInt(0, mCanvasWidth);
-				int randY = randInt(0, mCanvasHeight);
-				rect.set(new Rect(randX - pelletSize, randY - pelletSize, randX + pelletSize, randY + pelletSize));
-				playerSize += 10;
+				//System.out.println("INTERSECTION");
+				addPellet(rect);
+				playerSize *= 1.1;
 				speed *= 0.9;
 				if(speed <= 1)
 					speed = 1;
@@ -212,6 +206,19 @@ public class Swarch extends GameThread{
 				updateScore(1);
 			}
 		}
+	}
+	
+	// add pellet
+	// essentially relocate the "eaten" pellet
+	private Rect addPellet(Rect rect) {
+		// X,Y are in the center of squares
+		// add/subtract the size to make sure that pellets are always in the boundaries of the map
+		int randX = randInt(pelletSize, mCanvasWidth  - pelletSize);
+		int randY = randInt(pelletSize, mCanvasHeight - pelletSize);
+		
+		rect.set(new Rect(randX - pelletSize, randY - pelletSize, randX + pelletSize, randY + pelletSize));
+		
+		return rect;
 	}
 	
 	// gets a random integer for the pellet location
