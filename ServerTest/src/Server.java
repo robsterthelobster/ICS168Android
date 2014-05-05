@@ -10,6 +10,7 @@ public class Server {
 		ObjectInputStream fromClient = null;
 		try {
 			serverSocket = new ServerSocket(serverPort);
+			System.out.println("Started");
 			while(true) {
 				Socket socket = serverSocket.accept();
 				System.out.println("Just connected to " + 

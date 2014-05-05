@@ -31,6 +31,9 @@ public class MainActivity extends Activity {
     private TextView attempts;
     private Button login;
     int counter = 3;
+    boolean loginScreen = true;
+    
+    static Network network = new Network();
 	
 	/** Called when the activity is first created. */
     @Override
@@ -49,8 +52,8 @@ public class MainActivity extends Activity {
         attempts = (TextView)findViewById(R.id.textView5);
         attempts.setText(Integer.toString(counter));
         login = (Button)findViewById(R.id.button1);
-        		
-   
+        
+    	//new ConnectToServer().execute();
     }
     
     public void login(View view)
@@ -60,6 +63,8 @@ public class MainActivity extends Activity {
         		!password.getText().toString().equals(""))
         {
         	//System.out.println(username.getText());
+        	loginScreen = false;
+        	
             setContentView(R.layout.activity_main);
             
             mGameView = (GameView)findViewById(R.id.gamearea);
@@ -70,8 +75,7 @@ public class MainActivity extends Activity {
         }	
         else
         {
-        	Toast.makeText(getApplicationContext(), "Wrong Credentials",
-	        Toast.LENGTH_SHORT).show();
+        	Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
 	        attempts.setBackgroundColor(Color.RED);	
 	        counter--;
 	        attempts.setText(Integer.toString(counter));
@@ -101,10 +105,14 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         
-        if(mGameThread.getMode() == GameThread.STATE_RUNNING) {
+		if(loginScreen == true){
+        	
+        }
+        else if(mGameThread.getMode() == GameThread.STATE_RUNNING) {
         	mGameThread.setState(GameThread.STATE_PAUSE);
         }
     }
+    
 
     
     @Override
@@ -116,6 +124,12 @@ public class MainActivity extends Activity {
         mGameThread = null;
         mGameView = null;
 	}    
+    
+    protected void onResume()
+    {
+    	super.onResume();
+    	//new ConnectToServer().execute();
+    }
     
     /*
      * UI Functions

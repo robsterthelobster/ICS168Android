@@ -26,7 +26,7 @@ public class Swarch extends GameThread{
 	private float xPress, yPress, xRelease, yRelease;
 	
 	private static final int SWIPE_MIN_DISTANCE = 120;
-
+	
 	//This is run before anything else, so we can prepare things here
 	public Swarch(GameView gameView) {
 		//House keeping
