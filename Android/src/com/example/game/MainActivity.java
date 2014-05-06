@@ -1,10 +1,19 @@
 package com.example.game;
 
+import java.io.IOException;
+
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.example.game.network.*;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,8 +42,9 @@ public class MainActivity extends Activity {
     int counter = 3;
     boolean loginScreen = true;
     
-    static Network network = new Network();
-	
+    Client client;
+	final static String IP = "174.77.39.159";
+    
 	/** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) { 
@@ -53,7 +63,36 @@ public class MainActivity extends Activity {
         attempts.setText(Integer.toString(counter));
         login = (Button)findViewById(R.id.button1);
         
-    	//new ConnectToServer().execute();
+        client = new Client();
+        Network.register(client.getEndPoint());
+		client.addListener(new Listener() {
+			public void connected(Connection connection) {
+				Log.e("Kryonet", "connected");
+			}
+		});
+    }
+    
+    public class ConnectToServer extends AsyncTask<Void, Void, Void>{
+
+    	@Override
+    	protected Void doInBackground(Void... arg0) {
+    		try{
+    			client.start();
+    			client.connect(5000, IP, Network.PORT);
+    			
+    	     	// connect to server
+            	LoginPacket packet = new LoginPacket();
+            	packet.username = username.getText().toString();
+            	packet.password = password.getText().toString();
+            	
+            	client.sendTCP(packet);
+    		}
+    		catch (IOException e)
+    		{
+    			e.printStackTrace();
+    		}
+    		return null;
+    	}
     }
     
     public void login(View view)
@@ -62,6 +101,8 @@ public class MainActivity extends Activity {
         if(!username.getText().toString().equals("") && 
         		!password.getText().toString().equals(""))
         {
+        	new ConnectToServer().execute();
+        	
         	//System.out.println(username.getText());
         	loginScreen = false;
         	
@@ -105,15 +146,10 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         
-		if(loginScreen == true){
-        	
-        }
-        else if(mGameThread.getMode() == GameThread.STATE_RUNNING) {
+        if(mGameThread.getMode() == GameThread.STATE_RUNNING && !loginScreen) {
         	mGameThread.setState(GameThread.STATE_PAUSE);
         }
     }
-    
-
     
     @Override
 	protected void onDestroy() {

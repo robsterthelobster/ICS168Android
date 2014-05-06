@@ -15,14 +15,21 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-	Network network = new Network();
 	Button button;
+	
+	Client client;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		client = new Client();
+		client.addListener(new Listener() {
+			public void connected(Connection connection) {
+				Log.e("Kryonet", "connected");
+			}
+		});
+		
 		button = (Button) findViewById(R.id.button1);
 		button.setOnClickListener(new View.OnClickListener() {
 
@@ -47,13 +54,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				Client client;
-				client = new Client();
-				client.addListener(new Listener() {
-					public void connected(Connection connection) {
-						Log.e("Kryonet", "connected");
-					}
-				});
+				
 				client.start();
 				client.connect(5000, "174.77.39.159", 8080);
 			} catch (IOException e) {
@@ -61,5 +62,9 @@ public class MainActivity extends Activity {
 			}
 			return null;
 		}
+	}
+	
+	protected void onPause(){
+		
 	}
 }
