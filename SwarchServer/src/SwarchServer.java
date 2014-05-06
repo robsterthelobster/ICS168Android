@@ -3,16 +3,15 @@ import java.io.IOException;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-
 import java.sql.DriverManager;
-import java.sql.ResultSet;
+//import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SwarchServer extends Listener {
 
 	static Server server;
-	static final int port = 4444;
+	static final int port = 8080;
 
 	public static void main(String[] args) throws IOException,
 			ClassNotFoundException {

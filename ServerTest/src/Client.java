@@ -9,6 +9,7 @@ public class Client {
 		ObjectOutputStream toServer = null;
 		ObjectInputStream fromServer = null;
 		try {
+			@SuppressWarnings("resource")
 			Scanner reader = new Scanner(System.in);
 			//get user input for number
 			int number = 1; // = Integer.parseInt(args[0]);
