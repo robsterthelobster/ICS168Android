@@ -1,6 +1,9 @@
 package com.example.game;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -43,7 +46,8 @@ public class MainActivity extends Activity {
     boolean loginScreen = true;
     
     Client client;
-	final static String IP = "174.77.39.159";
+//	final static String IP = "174.77.39.159";	// Robin's IP
+	final static String IP = "75.79.16.233";	// Val's IP
     
 	/** Called when the activity is first created. */
     @Override
@@ -76,14 +80,18 @@ public class MainActivity extends Activity {
 
     	@Override
     	protected Void doInBackground(Void... arg0) {
-    		try{
+    		try
+    		{
     			client.start();
     			client.connect(5000, IP, Network.PORT);
     			
     	     	// connect to server
             	LoginPacket packet = new LoginPacket();
             	packet.username = username.getText().toString();
-            	packet.password = password.getText().toString();
+            	packet.password = md5(password.getText().toString());
+            	
+//            	Toast.makeText(getApplicationContext(), packet.username + " " + packet.password, Toast.LENGTH_SHORT).show();
+//            	System.out.println(packet.username + " " + packet.password);
             	
             	client.sendTCP(packet);
     		}
@@ -120,7 +128,7 @@ public class MainActivity extends Activity {
 	        attempts.setBackgroundColor(Color.RED);	
 	        counter--;
 	        attempts.setText(Integer.toString(counter));
-	        if(counter==0){
+	        if(counter == 0){
 	        	login.setEnabled(false);
 	        }
         }
@@ -205,6 +213,24 @@ public class MainActivity extends Activity {
 
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// Do nothing if nothing is selected
+	}
+	
+	// MD5 Converter (Credits to http://stackoverflow.com/questions/3934331/android-how-to-encrypt-a-string)
+	public static String md5(String s) 
+	{
+	    MessageDigest digest;
+	    try 
+	    {
+	        digest = MessageDigest.getInstance("MD5");
+	        digest.update(s.getBytes(),0,s.length());
+	        String hash = new BigInteger(1, digest.digest()).toString(16);
+	        return hash;
+	    } 
+	    catch (NoSuchAlgorithmException e) 
+	    {
+	        e.printStackTrace();
+	    }
+	    return "";
 	}
 }
 

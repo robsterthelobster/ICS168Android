@@ -31,7 +31,8 @@ public class SwarchServer extends Listener {
 
 		System.out.println("Server started");
 
-		try {
+		try 
+		{
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 			statement = connection.createStatement();
@@ -41,16 +42,25 @@ public class SwarchServer extends Listener {
 			statement.executeUpdate("create table person (username string, password string)");
 			
 			System.out.println("database initiated");
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) 
+		{
 			System.err.println(e.getMessage());
-		} finally {
-			try {
-				if (connection != null)
+		} 
+		finally 
+		{
+			if (connection != null)
+			{
+				try 
+				{
 					connection.close();
-				System.out.println("closed");
-			} catch (SQLException e) {
-				// connection close failed.
-				System.err.println(e);
+					System.out.println("closed");
+				}
+				catch (SQLException e)
+				{
+					// connection close failed.
+					System.err.print(e);
+				}				
 			}
 		}
 	}
@@ -76,13 +86,53 @@ public class SwarchServer extends Listener {
 			
 			if (o instanceof LoginPacket) {
 				LoginPacket packet = (LoginPacket) o;
-//				System.out.println("username: " + packet.username);
-//				System.out.println("password: " + packet.password);
-				 String sql = "insert into person values('" + packet.username +
-				 "', '" + packet.password + "')";
-				 System.out.println(sql);
-				 statement.executeUpdate(sql);
+				
+				// Username checking				
+				String usernameSQL = "SELECT username FROM person WHERE username =" + packet.username;	// NEED TO CHANGE (SECURITY REASONS)
+//				System.out.println("usernameSQL: " + usernameSQL);
+				
+				// if username exists in database
+				if (statement.executeQuery(usernameSQL).toString() == packet.username)
+				{
+					// check its password
+					String passwordSQL = "SELECT password FROM person WHERE username = " + packet.username;		// NEED TO CHANGE (SECURITY REASONS)
+//					System.out.println("passwordSQL: " + passwordSQL);
+					
+					// if password matches
+					if (statement.executeQuery(passwordSQL).toString() == packet.password)
+					{
+						// LOGIN SUCCESS
+						System.out.println("Login success!  Welcome " + packet.username);
+					}
+					// else password fails
+					else 
+					{
+						// LOGIN FAILED
+						System.out.println("Login failed.  Incorrect password.");
+					}											
+				}
+				
+				// else username isn't in the database, so must insert into table
+				else 
+				{
+//					System.out.println("username: " + packet.username);
+//					System.out.println("password: " + packet.password);
+					String insertSQL = "INSERT INTO person VALUES('" + packet.username +
+							"', '" + packet.password + "')";
+							 
+					System.out.println(insertSQL);
+					statement.executeUpdate(insertSQL);
+				}						
+				
+
+				
+//				String sql = "insert into person values('" + packet.username +
+//				"', '" + packet.password + "')";
+//				 
+//				System.out.println(sql);
+//				statement.executeUpdate(sql);
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
