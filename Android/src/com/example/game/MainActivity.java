@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
 	Client client;
 	final static String IP = "174.77.39.159"; // Robin's IP
 	// final static String IP = "75.79.16.233"; // Val's IP
+	//final static String IP = "169.234.18.145"; // uci mobile network on robin
 
 	/** Called when the activity is first created. */
 	@Override
