@@ -38,12 +38,16 @@ public class SwarchServer extends Listener {
 			System.out.println("username: " + packet.username);
 			System.out.println("password: " + packet.password);
 			
+			// send true to start
+			// false to prompt wrong credentials
+			StartPacket p = new StartPacket();
 			// if login successful
-			if(dbm.loginUser(packet.username, packet.password)){
-				StartPacket p = new StartPacket();
+			if(dbm.loginUser(packet.username, packet.password))
 				p.start = true;
-				server.sendToTCP(c.getID(), p);
+			else{
+				p.start = false;
 			}
+			server.sendToTCP(c.getID(), p);
 		}
 
 	}

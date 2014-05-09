@@ -1,5 +1,5 @@
 package com.example.game.network;
 
-public class StartPacket {
+public class StartPacket extends Packet{
 	public boolean start;
 }

@@ -11,6 +11,7 @@ public class Network {
 		
 		Kryo kryo = endPoint.getKryo();
 		
+		kryo.register(Packet.class);
 		kryo.register(LoginPacket.class);
 		kryo.register(StartPacket.class);
 	}
