@@ -11,8 +11,10 @@ public class SwarchServer extends Listener {
 	private static DatabaseManager dbm;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		
+		String dbName = "jdbc:sqlite:Swarch.db";
 
-		dbm = new DatabaseManager("jdbc:sqlite:Swarch.db");
+		dbm = new DatabaseManager(dbName);
 		
 		server = new Server();
 		// register packets under here
@@ -44,9 +46,8 @@ public class SwarchServer extends Listener {
 			// if login successful
 			if(dbm.loginUser(packet.username, packet.password))
 				p.start = true;
-			else{
+			else
 				p.start = false;
-			}
 			server.sendToTCP(c.getID(), p);
 		}
 
