@@ -1,9 +1,10 @@
 import java.io.IOException;
 
+import network.*;
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.example.game.network.*;
 
 public class SwarchServer extends Listener {
 
@@ -25,6 +26,10 @@ public class SwarchServer extends Listener {
 		server.addListener(new SwarchServer());
 
 		System.out.println("Server started");
+		
+		System.out.println("game started");
+		new SwarchGame().runGameLoop();
+		
 	}
 
 	public void connected(Connection c) {
@@ -49,6 +54,11 @@ public class SwarchServer extends Listener {
 			else
 				p.start = false;
 			server.sendToTCP(c.getID(), p);
+		}
+		if(o instanceof DirectionPacket){
+			DirectionPacket packet = (DirectionPacket) o;
+			System.out.println("directionX: " + packet.directionX);
+			System.out.println("directionY: " + packet.directionY);
 		}
 
 	}

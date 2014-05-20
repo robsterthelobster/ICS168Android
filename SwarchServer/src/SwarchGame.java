@@ -1,5 +1,12 @@
 //http://www.java-gaming.org/index.php?topic=24220.0
 
+import game.*;
+
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Random;
+
 public class SwarchGame
 {
    private boolean running = false;
@@ -7,8 +14,38 @@ public class SwarchGame
    private int fps = 60;
    private int frameCount = 0;
    
+   private static ArrayList<Player> players;
+   private ArrayList<Rectangle> pellets;
+   private ArrayList<Point> locations;
+   
+   private int pelletSize;
+   private int width = 1920;
+   private int height = 1080;
+   
+   
    public SwarchGame()
    {
+	   players = new ArrayList<Player>();
+	   pellets = new ArrayList<Rectangle>();
+	   locations = new ArrayList<Point>();
+	   // 100, 100
+	   // 1820, 100
+	   // 1820, 980
+	   // 100, 920
+	   locations.add(new Point(100, 100));
+	   locations.add(new Point(1820, 100));
+	   locations.add(new Point(1820, 980));
+	   locations.add(new Point(100, 980));
+	   running = true;
+   }
+   
+   public void init(boolean first){
+	   pelletSize = height/50;
+	   if(first){
+		   for(int i = 0; i < 4; i++)
+			   pellets.add(addPellet(new Rectangle()));
+	   }
+	   
    }
    
    //Starts a new thread and runs the game loop in it.
@@ -77,7 +114,7 @@ public class SwarchGame
             int thisSecond = (int) (lastUpdateTime / 1000000000);
             if (thisSecond > lastSecondTime)
             {
-               System.out.println("NEW SECOND " + thisSecond + " " + frameCount);
+               //System.out.println("NEW SECOND " + thisSecond + " " + frameCount);
                fps = frameCount;
                frameCount = 0;
                lastSecondTime = thisSecond;
@@ -99,12 +136,42 @@ public class SwarchGame
       }
    }
    
+   
    private void updateGame()
    {
-	   System.out.println("FPS: " + fps);
+	   //System.out.println("FPS: " + fps);
+	   for(Player player : players){
+		   player.x += player.directionX * player.speed;
+		   player.y += player.directionY * player.speed;
+		   
+		   if(	player.x < 0 || player.x + player.size > width ||
+				player.y < 0 || player.y + player.size > height){
+			   
+			   player.x = locations.get(player.num).x;
+			   player.y = locations.get(player.num).y;
+			   
+		   }
+	   }
    }
    
    private void drawGame(float interpolation)
    {
+	   frameCount++;
+   }
+   
+   private Rectangle addPellet(Rectangle rect){
+	   int randX = randInt(pelletSize, width);
+	   int randY = randInt(pelletSize, height);
+	   
+	   rect.x = randX;
+	   rect.y = randY;
+	   rect.height = pelletSize;
+	   rect.width = pelletSize;
+	   
+	   return rect;
+   }
+   
+   private int randInt(int min, int max){
+	   return new Random().nextInt((max - min) + 1) + min;
    }
 }

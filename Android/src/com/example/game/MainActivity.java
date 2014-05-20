@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 	int counter = 3;
 	boolean loginScreen = true;
 
-	Client client;
+	static Client client;
 
 	// final static String IP = "174.77.39.159"; // Robin's IP
 	// final static String IP = "75.79.16.233"; // Val's IP
@@ -160,19 +160,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	public class SendPacket extends AsyncTask<Packet, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Packet... packet) {
-			if (packet[0] instanceof LoginPacket) {
-				LoginPacket p = (LoginPacket) packet[0];
-				System.out.println(p.username);
-				client.sendTCP(p);
-			}
-			return null;
-		}
-	}
-
 	public void login(View view) {
 		// as long as username and password are not empty strings
 		if (!username.getText().toString().equals("") && !password.getText().toString().equals("")) {
@@ -236,6 +223,11 @@ public class MainActivity extends Activity {
 						}
 					});
 				}
+			}
+			if(object instanceof CreatePlayerPacket){
+				CreatePlayerPacket p = (CreatePlayerPacket) object;
+				Player player = new Player();
+				
 			}
 		}
 	}

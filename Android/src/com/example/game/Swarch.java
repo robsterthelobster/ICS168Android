@@ -4,6 +4,8 @@ package com.example.game;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.example.game.network.*;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -120,12 +122,20 @@ public class Swarch extends GameThread{
     				// Left to Right
     				if (xPress < xRelease)
     				{
+    					DirectionPacket p = new DirectionPacket();
+    					p.directionX = 1;
+    					p.directionY = 0;
+    					new SendPacket().execute(p);
     					direction.set(1, 0);
     				}
 
     				// Right to Left
     				if (xPress > xRelease)
     				{
+    					DirectionPacket p = new DirectionPacket();
+    					p.directionX = -1;
+    					p.directionY = 0;
+    					new SendPacket().execute(p);
     					direction.set(-1, 0);
     				}
     			}
@@ -135,13 +145,21 @@ public class Swarch extends GameThread{
 	    			// Top to Bottom
 	    			if (yPress < yRelease)
 	    			{
-	    				direction.set(0, 1);
+	    				DirectionPacket p = new DirectionPacket();
+    					p.directionX = 0;
+    					p.directionY = 1;
+    					new SendPacket().execute(p);
+    					direction.set(0, 1);
 	    			}
 	    			
 	    			// Bottom to Top
 	    			if (yPress > yRelease)
 	    			{
-	    				direction.set(0, -1);   		
+	    				DirectionPacket p = new DirectionPacket();
+    					p.directionX = 0;
+    					p.directionY = -1;
+    					new SendPacket().execute(p);
+    					direction.set(0, -1);
 	    			}	    	
     			}
     			break;
@@ -182,13 +200,6 @@ public class Swarch extends GameThread{
 		playerX += direction.x * speed * secondsElapsed;
 		playerY += direction.y * speed * secondsElapsed;
 				
-		// border check
-		if(myBox.left < 0 || myBox.right > mCanvasWidth ||
-				myBox.top < 0 || myBox.bottom > mCanvasHeight)
-		{
-			this.setupBeginning(false);
-		}
-		
 		myBox.set(playerX - playerSize, playerY - playerSize, playerX + playerSize, playerY + playerSize);
 		
 		// player/pellet collision
@@ -205,6 +216,13 @@ public class Swarch extends GameThread{
 				
 				updateScore(1);
 			}
+		}
+		
+		// border check
+		if(myBox.left < 0 || myBox.right > mCanvasWidth ||
+				myBox.top < 0 || myBox.bottom > mCanvasHeight)
+		{
+			this.setupBeginning(false);
 		}
 	}
 	
@@ -225,30 +243,8 @@ public class Swarch extends GameThread{
 	// took from:
 	// "http://stackoverflow.com/questions/363681/generating-random-numbers-in-a-range-with-java"
 	private int randInt(int min, int max) {
-
-	    // Usually this can be a field rather than a method variable
 	    Random rand = new Random();
-
-	    // nextInt is normally exclusive of the top value,
-	    // so add 1 to make it inclusive
 	    int randomNum = rand.nextInt((max - min) + 1) + min;
-
 	    return randomNum;
 	}
 }
-
-// This file is part of the course "Begin Programming: Build your first mobile game" from futurelearn.com
-// Copyright: University of Reading and Karsten Lundqvist
-// It is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// It is is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// 
-// You should have received a copy of the GNU General Public License
-// along with it.  If not, see <http://www.gnu.org/licenses/>.
