@@ -140,17 +140,60 @@ public class SwarchGame
    private void updateGame()
    {
 	   //System.out.println("FPS: " + fps);
+	   
+	   // Move players and detect collisions
 	   for(Player player : players){
 		   player.x += player.directionX * player.speed;
 		   player.y += player.directionY * player.speed;
 		   
+		   // Collision with borders
 		   if(	player.x < 0 || player.x + player.size > width ||
 				player.y < 0 || player.y + player.size > height){
 			   
+			   // Revive
 			   player.x = locations.get(player.num).x;
-			   player.y = locations.get(player.num).y;
-			   
+			   player.y = locations.get(player.num).y;			   
 		   }
+		   
+		   // Collision with other players
+		   for (Player p : players) {
+			   if (player.id < p.id && 
+				   player.x < p.x + p.size || player.y < p.y + p.size || 
+				   p.x < player.x + player.size || p.y < player.y + player.size)
+			   {
+				   int playerWidth = player.size;
+				   int pWidth = p.size;
+				   
+				   if (playerWidth > pWidth) {
+					   // player grows and slows
+					   player.size += p.size;
+					   player.speed *= 0.9;					   
+					   
+					   // p respawns
+					   p.x = locations.get(p.num).x;
+					   p.y = locations.get(p.num).y;
+				   }
+				   
+				   else if (playerWidth > pWidth) {
+					   // p grows and slows
+					   p.size += player.size;
+					   p.speed *= 0.9;
+					   
+					   // player respawns
+					   player.x = locations.get(player.num).x;
+					   player.y = locations.get(player.num).y;
+				   }
+				   
+				   else { // both have same size, kill both
+					   player.x = locations.get(player.num).x;
+					   player.y = locations.get(player.num).y;
+					   
+					   p.x = locations.get(p.num).x;
+					   p.y = locations.get(p.num).y;
+				   }
+			   }
+		   }
+			   
 	   }
    }
    
