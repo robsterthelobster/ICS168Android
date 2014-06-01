@@ -1,4 +1,4 @@
-package com.example.game.network;
+package network;
 
 public class PelletPacket extends Packet{
 	public float x1;

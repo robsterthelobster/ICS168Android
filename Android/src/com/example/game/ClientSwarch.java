@@ -1,8 +1,9 @@
 package com.example.game;
 
 import java.util.ArrayList;
-import java.util.Random;
+
 import com.example.game.network.*;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,13 +12,13 @@ import android.view.MotionEvent;
 
 public class ClientSwarch extends GameThread {
 
-	private ArrayList<RectF> pellets;
-	private int pelletSize;
-
 	private float xPress, yPress, xRelease, yRelease;
 
 	private static final int SWIPE_MIN_DISTANCE = 120;
 
+	public static final int pelletSize = 1920/50;
+	public static ArrayList<RectF> pellets = new ArrayList<RectF>();
+	
 	// This is run before anything else, so we can prepare things here
 	public ClientSwarch(GameView gameView) {
 		// House keeping
@@ -26,21 +27,13 @@ public class ClientSwarch extends GameThread {
 		// just declaring stuff here, values are basically ignored
 		// look at setUpBeginning for new games values
 		paint = new Paint();
-		pellets = new ArrayList<RectF>();
 	}
 
 	// This is run before a new game (also after an old game)
 	@Override
 	public void setupBeginning(boolean firstTimeSetUp) {
 
-		// System.out.println("Height: " + mCanvasHeight);
-		pelletSize = mCanvasHeight / 50;
-
 		setScore(0);
-
-		if (firstTimeSetUp)
-			for (int i = 0; i < 4; i++)
-				pellets.add(addPellet(new RectF()));
 	}
 
 	@Override
@@ -57,10 +50,10 @@ public class ClientSwarch extends GameThread {
 
 		// draw pellets as white
 		paint.setColor(Color.WHITE);
-		for (RectF rect : pellets) {
-			canvas.drawRect(rect, paint);
+		for(RectF pellet: pellets){
+			canvas.drawRect(pellet, paint);
 		}
-
+		
 		// draw player as blue
 		paint.setColor(Color.BLUE);
 		for (Player player : MainActivity.players) {
@@ -138,51 +131,5 @@ public class ClientSwarch extends GameThread {
 		for (Player player : MainActivity.players) {
 			player.update();
 		}
-		// // player/pellet collision
-		// for(RectF rect : pellets)
-		// {
-		// if(myBox.intersect(rect))
-		// {
-		// //System.out.println("INTERSECTION");
-		// addPellet(rect);
-		// playerSize *= 1.1;
-		// speed *= 0.9;
-		// if(speed <= 1)
-		// speed = 1;
-		//
-		// updateScore(1);
-		// }
-		// }
-		//
-		// // border check
-		// if(myBox.left < 0 || myBox.right > mCanvasWidth ||
-		// myBox.top < 0 || myBox.bottom > mCanvasHeight)
-		// {
-		// this.setupBeginning(false);
-		// }
-	}
-
-	// add pellet
-	// essentially relocate the "eaten" pellet
-	private RectF addPellet(RectF rect) {
-		// X,Y are in the center of squares
-		// add/subtract the size to make sure that pellets are always in the
-		// boundaries of the map
-		int randX = randInt(pelletSize, mCanvasWidth - pelletSize);
-		int randY = randInt(pelletSize, mCanvasHeight - pelletSize);
-
-		rect.set(new RectF(randX - pelletSize, randY - pelletSize, randX + pelletSize, randY
-				+ pelletSize));
-
-		return rect;
-	}
-
-	// gets a random integer for the pellet location
-	// took from:
-	// "http://stackoverflow.com/questions/363681/generating-random-numbers-in-a-range-with-java"
-	private int randInt(int min, int max) {
-		Random rand = new Random();
-		int randomNum = rand.nextInt((max - min) + 1) + min;
-		return randomNum;
 	}
 }

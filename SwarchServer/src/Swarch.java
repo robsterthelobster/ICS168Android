@@ -6,9 +6,9 @@ import network.*;
 
 public class Swarch extends GameThread {
 
-	public ArrayList<Rectangle> pellets = new ArrayList<Rectangle>();
+	public static ArrayList<Rectangle> pellets = new ArrayList<Rectangle>();
 
-	public int pelletSize = 1920 / 50;
+	public final int pelletSize = 1920 / 50;
 
 	public final int width = 1920;
 	public final int height = 1080;

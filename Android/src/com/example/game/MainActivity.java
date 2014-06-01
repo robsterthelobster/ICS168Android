@@ -14,6 +14,7 @@ import com.example.game.network.*;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -249,6 +250,20 @@ public class MainActivity extends Activity {
 						player.speed = p.speed;
 					}
 				}
+			}
+			else if(object instanceof PelletPacket){
+				PelletPacket p = (PelletPacket) object;
+				
+				ClientSwarch.pellets.clear();
+				int size = ClientSwarch.pelletSize;
+				RectF p1 = new RectF(p.x1, p.y1, p.x1 + size, p.y1 + size);
+				RectF p2 = new RectF(p.x2, p.y2, p.x2 + size, p.y2 + size);
+				RectF p3 = new RectF(p.x3, p.y3, p.x3 + size, p.y3 + size);
+				RectF p4 = new RectF(p.x4, p.y4, p.x4 + size, p.y4 + size);
+				ClientSwarch.pellets.add(p1);
+				ClientSwarch.pellets.add(p2);
+				ClientSwarch.pellets.add(p3);
+				ClientSwarch.pellets.add(p4);
 			}
 		}
 	}
