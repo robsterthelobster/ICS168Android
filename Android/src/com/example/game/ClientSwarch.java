@@ -18,8 +18,6 @@ public class ClientSwarch extends GameThread {
 
 	private static final int SWIPE_MIN_DISTANCE = 120;
 
-	public static ArrayList<Player> players = new ArrayList<Player>();;
-
 	// This is run before anything else, so we can prepare things here
 	public ClientSwarch(GameView gameView) {
 		// House keeping
@@ -65,7 +63,7 @@ public class ClientSwarch extends GameThread {
 
 		// draw player as blue
 		paint.setColor(Color.BLUE);
-		for (Player player : players) {
+		for (Player player : MainActivity.players) {
 			canvas.drawRect(player.rect, paint);
 		}
 
@@ -79,14 +77,12 @@ public class ClientSwarch extends GameThread {
 		// System.out.println("Y " + y);
 
 		switch (e.getAction()) {
-		case MotionEvent.ACTION_DOWN: {
+		case MotionEvent.ACTION_DOWN:
 			xPress = e.getX();
 			yPress = e.getY();
-
 			break;
-		}
 
-		case MotionEvent.ACTION_UP: {
+		case MotionEvent.ACTION_UP:
 			xRelease = e.getX();
 			yRelease = e.getY();
 
@@ -111,36 +107,37 @@ public class ClientSwarch extends GameThread {
 					new SendPacket().execute(p);
 					// direction.set(-1, 0);
 				}
-			}
 
-			if (Math.abs(yDelta) > SWIPE_MIN_DISTANCE) {
-				// Top to Bottom
-				if (yPress < yRelease) {
-					DirectionPacket p = new DirectionPacket();
-					p.directionX = 0;
-					p.directionY = 1;
-					new SendPacket().execute(p);
-					// direction.set(0, 1);
-				}
+				if (Math.abs(yDelta) > SWIPE_MIN_DISTANCE) {
+					// Top to Bottom
+					if (yPress < yRelease) {
+						DirectionPacket p = new DirectionPacket();
+						p.directionX = 0;
+						p.directionY = 1;
+						new SendPacket().execute(p);
+						// direction.set(0, 1);
+					}
 
-				// Bottom to Top
-				if (yPress > yRelease) {
-					DirectionPacket p = new DirectionPacket();
-					p.directionX = 0;
-					p.directionY = -1;
-					new SendPacket().execute(p);
-					// direction.set(0, -1);
+					// Bottom to Top
+					if (yPress > yRelease) {
+						DirectionPacket p = new DirectionPacket();
+						p.directionX = 0;
+						p.directionY = -1;
+						new SendPacket().execute(p);
+						// direction.set(0, -1);
+					}
 				}
+				break;
 			}
-			break;
-		}
 		}
 	}
 
 	// This is run just before the game "scenario" is printed on the screen
 	@Override
 	protected void updateGame(float secondsElapsed) {
-
+		for (Player player : MainActivity.players) {
+			player.update();
+		}
 		// // player/pellet collision
 		// for(RectF rect : pellets)
 		// {

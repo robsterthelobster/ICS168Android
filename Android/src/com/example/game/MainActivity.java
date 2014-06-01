@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -33,6 +34,8 @@ public class MainActivity extends Activity {
 	private static final int MENU_START = 2;
 	private static final int MENU_STOP = 3;
 	private static final int MENU_MOTION = 4;
+	
+	public static ArrayList<Player> players = new ArrayList<Player>();
 
 	private GameThread mGameThread;
 	private GameView mGameView;
@@ -231,8 +234,21 @@ public class MainActivity extends Activity {
 				player.speed = p.speed;
 				player.id = p.id;
 				
-				ClientSwarch.players.add(player);
+				players.add(player);
 				
+			}
+			else if(object instanceof PlayerPacket){
+				PlayerPacket p = (PlayerPacket) object;
+				for(Player player: players){
+					if(player.id == p.id ){
+						player.x = p.x;
+						player.y = p.y;
+						player.directionX = p.directionX;
+						player.directionY = p.directionY;
+						player.size = p.size;
+						player.speed = p.speed;
+					}
+				}
 			}
 		}
 	}

@@ -16,4 +16,8 @@ public class Player {
 	public Player(float x, float y, float size){
 		rect = new RectF(x, y, x + size, y + size);
 	}
+	
+	public void update(){
+		rect.set(x, y, x + size, y + size);
+	}
 }

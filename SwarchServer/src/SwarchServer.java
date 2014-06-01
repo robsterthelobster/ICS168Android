@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 import network.*;
 
@@ -10,6 +11,7 @@ public class SwarchServer extends Listener {
 
 	static Server server;
 	private static DatabaseManager dbm;
+	public static ArrayList<Player> players = new ArrayList<Player>();
 	static Swarch game;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -60,7 +62,7 @@ public class SwarchServer extends Listener {
 			
 			if(p.start){
 				
-				for(Player player: game.players){
+				for(Player player: players){
 					CreatePlayerPacket cpp = new CreatePlayerPacket();
 					cpp.size = player.size;
 					cpp.speed = player.speed;
@@ -73,20 +75,20 @@ public class SwarchServer extends Listener {
 				CreatePlayerPacket cp = new CreatePlayerPacket();
 				cp.size = game.SIZE;
 				cp.speed = game.SPEED;
-				cp.x = game.players.size() * 200 + 100;
+				cp.x = players.size() * 200 + 100;
 				cp.y = game.height/2;
 				cp.id = c.getID();
 				
 				server.sendToAllTCP(cp);
 				
 				Player player = new Player();
-				player.x = game.players.size() * 200 + 100;
+				player.x = players.size() * 200 + 100;
 				player.y = game.height/2;
 				player.id = c.getID();
 				player.size = game.SIZE;
 				player.speed = game.SPEED;
 				
-				game.players.add(player);
+				players.add(player);
 				
 				
 				
@@ -94,12 +96,25 @@ public class SwarchServer extends Listener {
 		}
 		if(o instanceof DirectionPacket){
 			DirectionPacket packet = (DirectionPacket) o;
-
+			for(Player player: players){
+				if(player.id == packet.id){
+					player.directionX = packet.directionX;
+					player.directionY = packet.directionY;
+				}
+			}
 		}
 
 	}
 
 	public void disconnected(Connection c) {
 		System.out.println("client disconnected");
+		Player p = null;
+		for(Player player: players){
+			if(player.id == c.getID()){
+				p = player;
+		
+			}
+		}
+		players.remove(p);
 	}
 }
