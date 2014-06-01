@@ -181,7 +181,7 @@ public class MainActivity extends Activity {
 
 	private void startGame(GameView gView, GameThread gThread) {
 		// Set up a new game, we don't care about previous states
-		mGameThread = new Swarch(mGameView);
+		mGameThread = new ClientSwarch(mGameView);
 		mGameView.setThread(mGameThread);
 		mGameThread.setState(GameThread.STATE_READY);
 		// hardcode username to the game thread
@@ -224,9 +224,14 @@ public class MainActivity extends Activity {
 					});
 				}
 			}
-			if(object instanceof CreatePlayerPacket){
+			else if(object instanceof CreatePlayerPacket){
 				CreatePlayerPacket p = (CreatePlayerPacket) object;
-				Player player = new Player();
+				
+				Player player = new Player(p.x, p.y, p.size);
+				player.speed = p.speed;
+				player.id = p.id;
+				
+				ClientSwarch.players.add(player);
 				
 			}
 		}

@@ -15,5 +15,7 @@ public class Network {
 		kryo.register(LoginPacket.class);
 		kryo.register(StartPacket.class);
 		kryo.register(DirectionPacket.class);
+		kryo.register(CreatePlayerPacket.class);
+		kryo.register(PlayerPacket.class);
 	}
 }

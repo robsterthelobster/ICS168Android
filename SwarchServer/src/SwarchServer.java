@@ -10,6 +10,7 @@ public class SwarchServer extends Listener {
 
 	static Server server;
 	private static DatabaseManager dbm;
+	static Swarch game;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
@@ -28,7 +29,9 @@ public class SwarchServer extends Listener {
 		System.out.println("Server started");
 		
 		System.out.println("game started");
-		new SwarchGame().runGameLoop();
+		game = new Swarch();
+		game.doStart();
+		game.run();
 		
 	}
 
@@ -54,11 +57,44 @@ public class SwarchServer extends Listener {
 			else
 				p.start = false;
 			server.sendToTCP(c.getID(), p);
+			
+			if(p.start){
+				
+				for(Player player: game.players){
+					CreatePlayerPacket cpp = new CreatePlayerPacket();
+					cpp.size = player.size;
+					cpp.speed = player.speed;
+					cpp.x = player.x;
+					cpp.y = player.y;
+					cpp.id = player.id;
+					server.sendToTCP(c.getID(), cpp);
+				}
+				
+				CreatePlayerPacket cp = new CreatePlayerPacket();
+				cp.size = game.SIZE;
+				cp.speed = game.SPEED;
+				cp.x = game.players.size() * 200 + 100;
+				cp.y = game.height/2;
+				cp.id = c.getID();
+				
+				server.sendToAllTCP(cp);
+				
+				Player player = new Player();
+				player.x = game.players.size() * 200 + 100;
+				player.y = game.height/2;
+				player.id = c.getID();
+				player.size = game.SIZE;
+				player.speed = game.SPEED;
+				
+				game.players.add(player);
+				
+				
+				
+			}
 		}
 		if(o instanceof DirectionPacket){
 			DirectionPacket packet = (DirectionPacket) o;
-			System.out.println("directionX: " + packet.directionX);
-			System.out.println("directionY: " + packet.directionY);
+
 		}
 
 	}

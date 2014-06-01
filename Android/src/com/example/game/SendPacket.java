@@ -15,6 +15,7 @@ public class SendPacket extends AsyncTask<Packet, Void, Void> {
 			if(packet[0] instanceof DirectionPacket){
 				DirectionPacket p = (DirectionPacket) packet[0];
 				System.out.println("direction packet");
+				p.id = MainActivity.client.getID();
 				MainActivity.client.sendTCP(p);
 			}
 			return null;
