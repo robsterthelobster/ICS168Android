@@ -46,8 +46,8 @@ public class Swarch extends GameThread {
 //			//System.out.println(players.get(i).x + ", " + players.get(i).y);
 //		}
 		for(Player player: SwarchServer.players){
-			player.x += player.directionX * player.speed * secondsElapsed;
-			player.y += player.directionY * player.speed * secondsElapsed;
+			if(player!=null)
+				player.update(secondsElapsed);
 		}
 		timer += secondsElapsed;
 		if (timer >= 1) {

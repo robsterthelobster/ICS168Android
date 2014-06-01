@@ -81,7 +81,7 @@ public class SwarchServer extends Listener {
 				
 				server.sendToAllTCP(cp);
 				
-				Player player = new Player();
+				Player player = new Player(cp.x, cp.y);
 				player.x = players.size() * 200 + 100;
 				player.y = game.height/2;
 				player.id = c.getID();
