@@ -1,4 +1,3 @@
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -6,29 +5,26 @@ import network.*;
 
 public class Swarch extends GameThread {
 
-	public static ArrayList<Rectangle> pellets = new ArrayList<Rectangle>();
+	public static ArrayList<Pellet> pellets = new ArrayList<Pellet>();
 
 	public final int pelletSize = 1920 / 50;
 
-	public final int width = 1920;
-	public final int height = 1080;
-	public final float SPEED = 1920 / 40;
-	public final float SIZE = 1920 / 20;
+	public final static int width = 1920;
+	public final static int height = 1080;
+	public final static float SPEED = 1920 / 20;
+	public final static float SIZE = 1920 / 20;
 
 	float timer = 0;
 
 	public Swarch() {
 		for (int i = 0; i < 4; i++) {
-			pellets.add(addPellet(new Rectangle()));
+			pellets.add(addPellet(new Pellet()));
 		}
 	}
 
 	// This is run before a new game (also after an old game)
 	@Override
 	public void setupBeginning(boolean firstTimeSetUp) {
-		for (int i = 0; i < 4; i++) {
-			pellets.add(addPellet(new Rectangle(0, 0, 0, 0)));
-		}
 	}
 
 	@Override
@@ -66,7 +62,7 @@ public class Swarch extends GameThread {
 		}
 	}
 
-	private Rectangle addPellet(Rectangle rect) {
+	private Pellet  addPellet(Pellet rect) {
 		int randX = randInt(pelletSize, width);
 		int randY = randInt(pelletSize, height);
 

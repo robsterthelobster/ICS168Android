@@ -17,7 +17,7 @@ public class Player {
 		rect = new RectF(x, y, x + size, y + size);
 	}
 	
-	public void update(){
+	public void update(float secondsElapsed){
 		rect.set(x, y, x + size, y + size);
 	}
 }

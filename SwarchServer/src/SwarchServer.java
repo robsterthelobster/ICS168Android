@@ -91,14 +91,14 @@ public class SwarchServer extends Listener {
 				players.add(player);
 				
 				PelletPacket pp = new PelletPacket();
-				pp.x1 = Swarch.pellets.get(1).x;
-				pp.x2 = Swarch.pellets.get(2).x;
-				pp.x3 = Swarch.pellets.get(3).x;
-				pp.x4 = Swarch.pellets.get(4).x;
-				pp.y1 = Swarch.pellets.get(1).y;
-				pp.y2 = Swarch.pellets.get(2).y;
-				pp.y3 = Swarch.pellets.get(3).y;
-				pp.y4 = Swarch.pellets.get(4).y;
+				pp.x1 = Swarch.pellets.get(0).x;
+				pp.x2 = Swarch.pellets.get(1).x;
+				pp.x3 = Swarch.pellets.get(2).x;
+				pp.x4 = Swarch.pellets.get(3).x;
+				pp.y1 = Swarch.pellets.get(0).y;
+				pp.y2 = Swarch.pellets.get(1).y;
+				pp.y3 = Swarch.pellets.get(2).y;
+				pp.y4 = Swarch.pellets.get(3).y;
 				
 				server.sendToTCP(c.getID(), pp);
 				

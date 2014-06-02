@@ -129,7 +129,7 @@ public class ClientSwarch extends GameThread {
 	@Override
 	protected void updateGame(float secondsElapsed) {
 		for (Player player : MainActivity.players) {
-			player.update();
+			player.update(secondsElapsed);
 		}
 	}
 }
