@@ -110,8 +110,24 @@ public class SwarchServer extends Listener {
 				if(player.id == packet.id){
 					player.directionX = packet.directionX;
 					player.directionY = packet.directionY;
+					System.out.println("ID: " + player.id + " , dirX: " + player.directionX
+								 + " , dirY: " + player.directionY);
 				}
 			}
+			for (Player pl : SwarchServer.players) {
+				if(pl!=null){
+					PlayerPacket cp = new PlayerPacket();
+					cp.x = pl.x;
+					cp.y = pl.y;
+					cp.directionX = pl.directionX;
+					cp.directionY = pl.directionY;
+					cp.size = pl.size;
+					cp.speed = pl.speed;
+					cp.id = pl.id;
+					SwarchServer.server.sendToAllTCP(cp);
+				}
+			}
+			
 		}
 
 	}

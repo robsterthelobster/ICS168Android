@@ -1,5 +1,7 @@
 import java.awt.Rectangle;
 
+import network.PlayerPacket;
+
 
 public class Player {
 	
@@ -32,6 +34,17 @@ public class Player {
 				size *= 1.1;
 				speed *= 0.9;
 				pellet.update();
+				for (Player pl : SwarchServer.players) {
+					PlayerPacket cp = new PlayerPacket();
+					cp.x = pl.x;
+					cp.y = pl.y;
+					cp.directionX = pl.directionX;
+					cp.directionY = pl.directionY;
+					cp.size = pl.size;
+					cp.speed = pl.speed;
+					cp.id = pl.id;
+					SwarchServer.server.sendToAllTCP(cp);
+				}
 			}
 		}
 		
@@ -51,6 +64,17 @@ public class Player {
 					else{
 						reset();
 						player.reset();
+					}
+					for (Player pl : SwarchServer.players) {
+						PlayerPacket cp = new PlayerPacket();
+						cp.x = pl.x;
+						cp.y = pl.y;
+						cp.directionX = pl.directionX;
+						cp.directionY = pl.directionY;
+						cp.size = pl.size;
+						cp.speed = pl.speed;
+						cp.id = pl.id;
+						SwarchServer.server.sendToAllTCP(cp);
 					}
 				}
 			}

@@ -45,21 +45,23 @@ public class Swarch extends GameThread {
 			if(player!=null)
 				player.update(secondsElapsed);
 		}
-		timer += secondsElapsed;
-		if (timer >= 1) {
-			timer = 0;
-			for (Player pl : SwarchServer.players) {
-				PlayerPacket cp = new PlayerPacket();
-				cp.x = pl.x;
-				cp.y = pl.y;
-				cp.directionX = pl.directionX;
-				cp.directionY = pl.directionY;
-				cp.size = pl.size;
-				cp.speed = pl.speed;
-				cp.id = pl.id;
-				SwarchServer.server.sendToAllTCP(cp);
-			}
-		}
+//		timer += secondsElapsed;
+//		if (timer >= 5) {
+//			timer = 0;
+//			for (Player pl : SwarchServer.players) {
+//				if(pl!=null){
+//					PlayerPacket cp = new PlayerPacket();
+//					cp.x = pl.x;
+//					cp.y = pl.y;
+//					cp.directionX = pl.directionX;
+//					cp.directionY = pl.directionY;
+//					cp.size = pl.size;
+//					cp.speed = pl.speed;
+//					cp.id = pl.id;
+//					SwarchServer.server.sendToAllTCP(cp);
+//				}
+//			}
+//		}
 	}
 
 	private Pellet  addPellet(Pellet rect) {

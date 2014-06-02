@@ -18,6 +18,8 @@ public class Player {
 	}
 	
 	public void update(float secondsElapsed){
+		x += directionX * speed * secondsElapsed;
+		y += directionY * speed * secondsElapsed;
 		rect.set(x, y, x + size, y + size);
 	}
 }
