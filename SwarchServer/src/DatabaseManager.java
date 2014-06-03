@@ -77,13 +77,25 @@ public class DatabaseManager {
 		return false;
 	}
 	
-	public void updateScore(int score){
+	public void updateScore(String name, int score){
 		try {
 			connection = DriverManager.getConnection(database);
 			statement = connection.createStatement();
 			statement.setQueryTimeout(30);
 			
+			String scoreSQL = "SELECT highscore FROM user WHERE username = '" + name + "'";
+			ResultSet rs = statement.executeQuery(scoreSQL);
 			
+			int highscore = 0;
+			
+			if(rs.next()){
+				highscore = rs.getInt("highscore");
+			}
+			
+			if(score > highscore){
+				String insertSQL = "Update user SET highscore="+score+" WHERE username = '" + name + "'";
+				statement.executeUpdate(insertSQL);
+			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -96,5 +108,4 @@ public class DatabaseManager {
 		}
 		
 	}
-	
 }

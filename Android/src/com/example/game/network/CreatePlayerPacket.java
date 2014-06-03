@@ -6,4 +6,5 @@ public class CreatePlayerPacket extends Packet{
 	public float size;
 	public float speed;
 	public int id;
+	public String name;
 }

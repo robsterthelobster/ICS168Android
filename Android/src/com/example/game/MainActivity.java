@@ -91,6 +91,13 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+//		for(int i = 0; i < players.size(); i++){
+//			Player player = players.get(i);
+//			if(player.id == players.get(i).id){
+//				players.remove(player);
+//			}
+//		}
+		
 		if (!loginScreen) {
 			mGameView.cleanup();
 			mGameView.removeSensor((SensorManager) getSystemService(Context.SENSOR_SERVICE));
@@ -135,7 +142,7 @@ public class MainActivity extends Activity {
 
 		return false;
 	}
-
+	
 	// MD5 Converter (Credits to
 	// http://stackoverflow.com/questions/3934331/android-how-to-encrypt-a-string)
 	public static String md5(String s) {
@@ -209,7 +216,7 @@ public class MainActivity extends Activity {
 
 							mGameView = (GameView) findViewById(R.id.gamearea);
 							mGameView.setStatusView((TextView) findViewById(R.id.text));
-							mGameView.setScoreView((TextView) findViewById(R.id.score));
+							//mGameView.setScoreView((TextView) findViewById(R.id.score));
 
 							startGame(mGameView, null);
 						}
@@ -234,7 +241,12 @@ public class MainActivity extends Activity {
 				Player player = new Player(p.x, p.y, p.size);
 				player.speed = p.speed;
 				player.id = p.id;
-				
+				player.name = p.name;
+				int color = players.size();
+				if(color > 5){
+					color = color % 5;
+				}
+				player.color = getColor(color);
 				players.add(player);
 				
 			}
@@ -248,6 +260,7 @@ public class MainActivity extends Activity {
 						player.directionY = p.directionY;
 						player.size = p.size;
 						player.speed = p.speed;
+						player.score = p.score;
 					}
 				}
 			}
@@ -265,6 +278,36 @@ public class MainActivity extends Activity {
 				ClientSwarch.pellets.add(p3);
 				ClientSwarch.pellets.add(p4);
 			}
+			
+			else if(object instanceof DisconnectPacket){
+				DisconnectPacket p = (DisconnectPacket) object;
+				
+				for(int i = 0; i < players.size(); i++){
+					Player player = players.get(i);
+					if(player.id == p.id){
+						players.remove(player);
+					}
+				}
+			}
 		}
+	}
+	
+	private int getColor(int color) {
+		switch (color) {
+		case 0:
+			return Color.MAGENTA;
+		case 1:
+			return Color.BLUE;
+		case 2:
+			return Color.RED;
+		case 3:
+			return Color.YELLOW;
+		case 4:
+			return Color.GREEN;
+		case 5:
+			return Color.CYAN;
+
+		}
+		return Color.WHITE;
 	}
 }

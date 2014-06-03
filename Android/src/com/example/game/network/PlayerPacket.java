@@ -8,4 +8,5 @@ public class PlayerPacket extends Packet{
 	public int directionY;
 	public float size;
 	public float speed;
+	public int score;
 }

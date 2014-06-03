@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import network.*;
 
@@ -10,7 +11,7 @@ import com.esotericsoftware.kryonet.Server;
 public class SwarchServer extends Listener {
 
 	static Server server;
-	private static DatabaseManager dbm;
+	public static DatabaseManager dbm;
 	public static ArrayList<Player> players = new ArrayList<Player>();
 	static Swarch game;
 
@@ -43,10 +44,11 @@ public class SwarchServer extends Listener {
 
 	public void received(Connection c, Object o) {
 
-		System.out.println("packet recieved");
+		//System.out.println("packet recieved");
 
 		if (o instanceof LoginPacket) {
 			LoginPacket packet = (LoginPacket) o;
+			System.out.println("LOGIN");
 			System.out.println("username: " + packet.username);
 			System.out.println("password: " + packet.password);
 			
@@ -69,24 +71,27 @@ public class SwarchServer extends Listener {
 					cpp.x = player.x;
 					cpp.y = player.y;
 					cpp.id = player.id;
+					cpp.name = player.name;
 					server.sendToTCP(c.getID(), cpp);
 				}
 				
 				CreatePlayerPacket cp = new CreatePlayerPacket();
 				cp.size = game.SIZE;
 				cp.speed = game.SPEED;
-				cp.x = players.size() * 200 + 100;
-				cp.y = game.height/2;
+				cp.x = randInt(0, (int)(1920 - game.SIZE));
+				cp.y = randInt(0, (int)(1080 - game.SIZE));
 				cp.id = c.getID();
+				cp.name = packet.username;
 				
 				server.sendToAllTCP(cp);
 				
 				Player player = new Player(cp.x, cp.y);
-				player.x = players.size() * 200 + 100;
-				player.y = game.height/2;
+				player.x = randInt(0, (int)(1920 - game.SIZE));
+				player.y = randInt(0, (int)(1080 - game.SIZE));
 				player.id = c.getID();
 				player.size = game.SIZE;
 				player.speed = game.SPEED;
+				player.name = packet.username;
 				
 				players.add(player);
 				
@@ -105,42 +110,50 @@ public class SwarchServer extends Listener {
 			}
 		}
 		if(o instanceof DirectionPacket){
+			System.out.println("DIRECTION");
 			DirectionPacket packet = (DirectionPacket) o;
+			Player p = null;
 			for(Player player: players){
 				if(player.id == packet.id){
-					player.directionX = packet.directionX;
-					player.directionY = packet.directionY;
-					System.out.println("ID: " + player.id + " , dirX: " + player.directionX
-								 + " , dirY: " + player.directionY);
-				}
-			}
-			for (Player pl : SwarchServer.players) {
-				if(pl!=null){
-					PlayerPacket cp = new PlayerPacket();
-					cp.x = pl.x;
-					cp.y = pl.y;
-					cp.directionX = pl.directionX;
-					cp.directionY = pl.directionY;
-					cp.size = pl.size;
-					cp.speed = pl.speed;
-					cp.id = pl.id;
-					SwarchServer.server.sendToAllTCP(cp);
+					p = player;
 				}
 			}
 			
+			p.directionX = packet.directionX;
+			p.directionY = packet.directionY;
+			System.out.println("ID: " + p.id + " , dirX: " + p.directionX
+						 + " , dirY: " + p.directionY);
+//			for (Player pl : SwarchServer.players) {
+//				if(pl!=null){
+					PlayerPacket cp = new PlayerPacket();
+					cp.x = p.x;
+					cp.y = p.y;
+					cp.directionX = p.directionX;
+					cp.directionY = p.directionY;
+					cp.size = p.size;
+					cp.speed = p.speed;
+					cp.id = p.id;
+					cp.score = p.score;
+					SwarchServer.server.sendToAllTCP(cp);
+//				}
+//			}
 		}
-
 	}
 
 	public void disconnected(Connection c) {
 		System.out.println("client disconnected");
-		Player p = null;
-		for(Player player: players){
-			if(player.id == c.getID()){
-				p = player;
+		DisconnectPacket p = new DisconnectPacket();
+		p.id = c.getID();
+		server.sendToAllExceptTCP(c.getID(), p);
 		
+		for(int i = 0; i < players.size(); i++){
+			if(players.get(i) != null && players.get(i).id == c.getID()){
+				players.remove(players.get(i));
 			}
 		}
-		players.remove(p);
+	}
+	
+	private int randInt(int min, int max) {
+		return new Random().nextInt((max - min) + 1) + min;
 	}
 }

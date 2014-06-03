@@ -1,4 +1,6 @@
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Random;
 
 import network.PlayerPacket;
 
@@ -12,6 +14,8 @@ public class Player {
 	public int directionY;
 	public float size;
 	public float speed;
+	public int score;
+	public String name;
 	
 	private float startX, startY;
 	
@@ -26,6 +30,7 @@ public class Player {
 		
 		if(x < 0 || x + size > 1920 || y < 0 || y + size > 1080){
 			reset();
+			updateClients();
 		}
 		
 		for(Pellet pellet : Swarch.pellets){
@@ -33,31 +38,23 @@ public class Player {
 				
 				size *= 1.1;
 				speed *= 0.9;
+				score++;
 				pellet.update();
-				for (Player pl : SwarchServer.players) {
-					PlayerPacket cp = new PlayerPacket();
-					cp.x = pl.x;
-					cp.y = pl.y;
-					cp.directionX = pl.directionX;
-					cp.directionY = pl.directionY;
-					cp.size = pl.size;
-					cp.speed = pl.speed;
-					cp.id = pl.id;
-					SwarchServer.server.sendToAllTCP(cp);
-				}
+				updateClients();
 			}
 		}
 		
-		for(Player player : SwarchServer.players){
+		for(int i = 0; i < SwarchServer.players.size(); i++){
+			Player player = SwarchServer.players.get(i);
 			if(player != null && player != this){
 				Rectangle rect = new Rectangle();
 				rect.setRect(player.x, player.y, player.size, player.size);
 				if(rect.intersects(x, y, size, size)){
-					if(rect.width > size){
+					if(player.size > size){
 						player.increase();
 						reset();
 					}
-					else if(rect.width < size){
+					else if(player.size < size){
 						increase();
 						player.reset();
 					}
@@ -65,32 +62,45 @@ public class Player {
 						reset();
 						player.reset();
 					}
-					for (Player pl : SwarchServer.players) {
-						PlayerPacket cp = new PlayerPacket();
-						cp.x = pl.x;
-						cp.y = pl.y;
-						cp.directionX = pl.directionX;
-						cp.directionY = pl.directionY;
-						cp.size = pl.size;
-						cp.speed = pl.speed;
-						cp.id = pl.id;
-						SwarchServer.server.sendToAllTCP(cp);
-					}
+					updateClients();
 				}
 			}
 		}
 	}
 	
 	public void reset(){
-		x = startX;
-		y = startY;
+		SwarchServer.dbm.updateScore(name, score);
 		size = Swarch.SIZE;
+		
+		x = randInt(0, (int)(1920 - 3*size));
+		y = randInt(0, (int)(1080 - 3*size));
+		
 		speed = Swarch.SPEED;
+		score = 0;
 	}
 	
 	public void increase(){
-		size *= 1.5;
+		size *= 1.1;
 		speed *= 0.9;
+		score += 10;
 	}
 	
+	public void updateClients(){
+		for (Player pl : SwarchServer.players) {
+			PlayerPacket cp = new PlayerPacket();
+			cp.x = pl.x;
+			cp.y = pl.y;
+			cp.directionX = pl.directionX;
+			cp.directionY = pl.directionY;
+			cp.size = pl.size;
+			cp.speed = pl.speed;
+			cp.id = pl.id;
+			cp.score = pl.score;
+			SwarchServer.server.sendToAllTCP(cp);
+		}
+	}
+	
+	private int randInt(int min, int max) {
+		return new Random().nextInt((max - min) + 1) + min;
+	}
 }

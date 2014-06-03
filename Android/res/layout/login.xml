@@ -101,7 +101,7 @@
        android:ems="10"
        android:hint="@string/IP"
        android:inputType="phone"
-       android:text="169.234.43.48" />
+       android:text="169.234.13.68" />
 
    <Button
        android:id="@+id/button1"

@@ -10,8 +10,8 @@ public class Swarch extends GameThread {
 	public final int pelletSize = 1920 / 50;
 
 	public final static int width = 1920;
-	public final static int height = 1080;
-	public final static float SPEED = 1920 / 20;
+	public final int height = 1080;
+	public final static float SPEED = 1920 / 4;
 	public final static float SIZE = 1920 / 20;
 
 	float timer = 0;
@@ -41,9 +41,9 @@ public class Swarch extends GameThread {
 //			players.get(i).y += players.get(i).directionY * players.get(i).speed * secondsElapsed;
 //			//System.out.println(players.get(i).x + ", " + players.get(i).y);
 //		}
-		for(Player player: SwarchServer.players){
-			if(player!=null)
-				player.update(secondsElapsed);
+		for(int i = 0; i < SwarchServer.players.size(); i++){
+			if(SwarchServer.players.get(i)!=null)
+				SwarchServer.players.get(i).update(secondsElapsed);
 		}
 //		timer += secondsElapsed;
 //		if (timer >= 5) {

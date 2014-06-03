@@ -38,7 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			@Override
 			public void handleMessage(Message m) {
 				if(m.getData().getBoolean("score")) {
-					mScoreView.setText(m.getData().getString("text"));
+					//mScoreView.setText(m.getData().getString("text"));
 				}
 				else {		
 					//So it is a status

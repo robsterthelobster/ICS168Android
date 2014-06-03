@@ -77,7 +77,7 @@ public abstract class GameThread extends Thread {
 	 * But if (later) the game involves more thread, we might need to stop a thread, and then we would need this
 	 * Dare I say memory leak...
 	 */
-	public void cleanup() {		
+	public void cleanup() {
 		this.mContext = null;
 		this.mGameView = null;
 		this.mHandler = null;
@@ -305,14 +305,14 @@ public abstract class GameThread extends Thread {
 	public void setScore(long score) {
 		this.score = score;
 		
-		synchronized (mSurfaceHolder) {
-			Message msg = mHandler.obtainMessage();
-			Bundle b = new Bundle();
-			b.putBoolean("score", true);
-			b.putString("text", username + ": " + getScoreString().toString());
-			msg.setData(b);
-			mHandler.sendMessage(msg);
-		}
+//		synchronized (mSurfaceHolder) {
+//			Message msg = mHandler.obtainMessage();
+//			Bundle b = new Bundle();
+//			b.putBoolean("score", true);
+//			b.putString("text", username + ": " + getScoreString().toString());
+//			msg.setData(b);
+//			mHandler.sendMessage(msg);
+//		}
 	}
 
 	public float getScore() {

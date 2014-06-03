@@ -16,9 +16,9 @@ public class ClientSwarch extends GameThread {
 
 	private static final int SWIPE_MIN_DISTANCE = 120;
 
-	public static final int pelletSize = 1920/50;
+	public static final int pelletSize = 1920 / 50;
 	public static ArrayList<RectF> pellets = new ArrayList<RectF>();
-	
+
 	// This is run before anything else, so we can prepare things here
 	public ClientSwarch(GameView gameView) {
 		// House keeping
@@ -33,13 +33,11 @@ public class ClientSwarch extends GameThread {
 	@Override
 	public void setupBeginning(boolean firstTimeSetUp) {
 
-		setScore(0);
+		//setScore(0);
 	}
 
 	@Override
 	protected void doDraw(Canvas canvas) {
-		// If there isn't a canvas to do nothing
-		// It is ok not understanding what is happening here
 		if (canvas == null)
 			return;
 
@@ -47,17 +45,30 @@ public class ClientSwarch extends GameThread {
 		// this only draws the background, we can change it when deemed
 		// necessary
 		super.doDraw(canvas);
+		
+		paint.setColor(Color.WHITE);
+		paint.setTextSize(48f);
+		
+		for(int i = 0; i < MainActivity.players.size(); i++){
+			Player player = MainActivity.players.get(i);
+			if(player != null){
+				String score = "";
+				score += player.name + ": " + player.score +"\n";
+				canvas.drawText(score, 100, 100 + 48f * i, paint);
+			}
+		}
+		
 
 		// draw pellets as white
 		paint.setColor(Color.WHITE);
-		for(RectF pellet: pellets){
+		for (RectF pellet : pellets) {
 			canvas.drawRect(pellet, paint);
 		}
-		
+
 		// draw player as blue
-		paint.setColor(Color.BLUE);
-		for (Player player : MainActivity.players) {
-			canvas.drawRect(player.rect, paint);
+		for (int i = 0; i < MainActivity.players.size(); i++) {
+			paint.setColor(MainActivity.players.get(i).color);
+			canvas.drawRect(MainActivity.players.get(i).rect, paint);
 		}
 
 	}
@@ -90,37 +101,40 @@ public class ClientSwarch extends GameThread {
 					p.directionY = 0;
 					new SendPacket().execute(p);
 					// direction.set(1, 0);
+					break;
 				}
 
 				// Right to Left
-				if (xPress > xRelease) {
+				else if (xPress > xRelease) {
 					DirectionPacket p = new DirectionPacket();
 					p.directionX = -1;
 					p.directionY = 0;
 					new SendPacket().execute(p);
 					// direction.set(-1, 0);
+					break;
+				}
+			}
+
+			if (Math.abs(yDelta) > SWIPE_MIN_DISTANCE) {
+				// Top to Bottom
+				if (yPress < yRelease) {
+					DirectionPacket p = new DirectionPacket();
+					p.directionX = 0;
+					p.directionY = 1;
+					new SendPacket().execute(p);
+					// direction.set(0, 1);
+					break;
 				}
 
-				if (Math.abs(yDelta) > SWIPE_MIN_DISTANCE) {
-					// Top to Bottom
-					if (yPress < yRelease) {
-						DirectionPacket p = new DirectionPacket();
-						p.directionX = 0;
-						p.directionY = 1;
-						new SendPacket().execute(p);
-						// direction.set(0, 1);
-					}
-
-					// Bottom to Top
-					if (yPress > yRelease) {
-						DirectionPacket p = new DirectionPacket();
-						p.directionX = 0;
-						p.directionY = -1;
-						new SendPacket().execute(p);
-						// direction.set(0, -1);
-					}
+				// Bottom to Top
+				if (yPress > yRelease) {
+					DirectionPacket p = new DirectionPacket();
+					p.directionX = 0;
+					p.directionY = -1;
+					new SendPacket().execute(p);
+					// direction.set(0, -1);
+					break;
 				}
-				break;
 			}
 		}
 	}
