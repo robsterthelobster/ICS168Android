@@ -46,6 +46,18 @@ public class ClientSwarch extends GameThread {
 		// necessary
 		super.doDraw(canvas);
 		
+		// draw pellets as white
+		paint.setColor(Color.GRAY);
+		for (RectF pellet : pellets) {
+			canvas.drawRect(pellet, paint);
+		}
+
+		// draw player as blue
+		for (int i = 0; i < MainActivity.players.size(); i++) {
+			paint.setColor(MainActivity.players.get(i).color);
+			canvas.drawRect(MainActivity.players.get(i).rect, paint);
+		}
+		
 		paint.setColor(Color.WHITE);
 		paint.setTextSize(48f);
 		
@@ -58,19 +70,6 @@ public class ClientSwarch extends GameThread {
 			}
 		}
 		
-
-		// draw pellets as white
-		paint.setColor(Color.WHITE);
-		for (RectF pellet : pellets) {
-			canvas.drawRect(pellet, paint);
-		}
-
-		// draw player as blue
-		for (int i = 0; i < MainActivity.players.size(); i++) {
-			paint.setColor(MainActivity.players.get(i).color);
-			canvas.drawRect(MainActivity.players.get(i).rect, paint);
-		}
-
 	}
 
 	// This is run whenever the phone is touched by the user

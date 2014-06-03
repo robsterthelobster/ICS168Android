@@ -242,7 +242,7 @@ public class MainActivity extends Activity {
 				player.speed = p.speed;
 				player.id = p.id;
 				player.name = p.name;
-				int color = players.size();
+				int color = players.size() + client.getID();
 				if(color > 5){
 					color = color % 5;
 				}
